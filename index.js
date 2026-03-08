@@ -1,26 +1,36 @@
-import express from 'express';
-import path from 'path';
+import express from 'express'
+
 const app = express();
 
 const PORT = 3002;
-const absPath = path.resolve("view")
-const publicPath = path.resolve("Public")
 
-app.use(express.static(publicPath))
+function checkAge(req,resp,next){
+    console.log(req.query.age)
+
+    if( !req.query.age || req.query.age<18){
+        resp.send("under age not allowed")
+    }else{
+        next()
+    }
+}
+function checkUrl(req,resp,next){
+    console.log("url check");
+    next()
+}
+// app.use(checkAge)
 
 app.get("/",(req,resp)=>{
-    resp.sendFile(absPath+"/home.html")
+    resp.send("<h1>This is Home Page</h1")
 })
-app.get("/login",(req,resp)=>{
-    resp.sendFile(absPath+"/login.html")
+app.get("/login",checkAge,(req,resp)=>{
+    resp.send("<h1>This is Login Page</h1")
 })
-app.get("/about",(req,resp)=>{
-    resp.sendFile(absPath+"/about.html")
+app.get("/user",checkUrl,(req,resp)=>{
+    resp.send("<h1>This is User Page</h1")
+})
+app.get("/products",checkAge,checkUrl,(req,resp)=>{
+    resp.send("<h1>This is Products Page</h1")
 })
 
-app.use((req,resp)=>{
-    resp.status(404).sendFile(absPath+"/404.html");
-})
-
-app.listen(PORT);
-console.log(`server workin at ${PORT}`)
+app.listen(PORT)
+console.log(`runnng at port ${PORT}`)
