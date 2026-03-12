@@ -1,27 +1,26 @@
-import express from 'express';
-import path from "path"
+import express from "express";
+import morgan from "morgan";
+
 const app = express();
 
-const publicPath = path.resolve("view/form.html")
-
 const PORT = 3002;
-app.use(express.urlencoded({extended:false}))
-app.use(express.static('public'))
+
+
 
 app.get("/",(req,resp)=>{
-    resp.send("sup")
-})
-
-app.get("/login",(req,resp)=>{
-    resp.sendFile(publicPath)
-})
-app.post("/submit",(req,resp)=>{
-    resp.send("This is submit page")
-    console.log(req.body)
+    resp.send("This is Home Page")
 })
 app.get("/users",(req,resp)=>{
-    resp.send("This is users page")
+    resp.send1("This is Users Page")
+})
+app.get("/error",(req,resp)=>{
+    resp.send("This is error Page")
 })
 
+function errorHandling(error,req,resp,next){
+    resp.status(error.status || 500).send("Try after someTimes")
+}
+app.use(errorHandling)
+
 app.listen(PORT);
-console.log(`running at ${PORT}`)
+console.log(`running on ${PORT}`)
