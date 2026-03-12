@@ -1,26 +1,19 @@
-import express from "express";
-import morgan from "morgan";
+import express from "express"
 
 const app = express();
-
 const PORT = 3002;
 
+app.use(express.urlencoded({extended:false}))
 
+app.set("view engine","ejs")
 
-app.get("/",(req,resp)=>{
-    resp.send("This is Home Page")
+app.get("/add-user",(req,resp)=>{
+    resp.render("addUser")
 })
-app.get("/users",(req,resp)=>{
-    resp.send1("This is Users Page")
+app.post("/submit-user",(req,resp)=>{
+    console.log(req.body)
+    resp.render("submitUser",req.body)
 })
-app.get("/error",(req,resp)=>{
-    resp.send("This is error Page")
-})
-
-function errorHandling(error,req,resp,next){
-    resp.status(error.status || 500).send("Try after someTimes")
-}
-app.use(errorHandling)
 
 app.listen(PORT);
 console.log(`running on ${PORT}`)
