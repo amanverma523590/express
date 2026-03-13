@@ -1,11 +1,24 @@
-import express from 'express'
-import { handleUsers } from './controller/userController.js';
+import express from 'express';
+
 const app = express();
 const PORT = 3002;
 
-app.set("view engine","ejs")
 
-app.get("/users",handleUsers)
+app.get("/",(req,resp)=>{
+    const users = ["anil","sanam","sahil","neyaj"];
+    let data = `<ul>`;
+    for(let i=0; i<users.length; i++){
 
-app.listen(PORT)
-console.log(`running at server ${PORT}`)
+        data+=`<li><a href="user/${users[i]}" >${users[i]}</a></li>`
+        console.log(users[i])
+    }
+    data+=`</ul>`
+    resp.send(data)
+})
+app.get("/user/:name",(req,resp)=>{
+    console.log(req.params.name)
+    resp.send(`this is ${req.params.name} profile page`);
+})
+
+app.listen(PORT);
+console.log(`Running on ${PORT}`)
