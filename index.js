@@ -1,25 +1,29 @@
-import express from 'express';
-import userData from "./users.json" with {type:"json"}
+import express from "express";
+import { MongoClient } from "mongodb";
+
+const url = "mongodb://localhost:27017";
+const dbName = "myDataBase";
 
 const app = express();
 const PORT = 3002;
+app.set("view engine","ejs")
 
-app.get("/",(req,resp)=>{
-    resp.send(userData)
-})
-app.get("/user/:id",(req,resp)=>{
-    const id = req.params.id;
-    let filterData = userData.filter((user)=>user.id==id)
-    resp.send(filterData)
-    console.log(id)
-})
+const client = new MongoClient(url);
 
-app.get("/username/:name",(req,resp)=>{
-    const name = req.params.name;
-    let filterData = userData.filter((user)=>user.name.toLowerCase()==name.toLowerCase());
-    resp.send(filterData);
-    console.log(name)
+client.connect().then((connection)=>{
+    const db = connection.db(dbName);
+
+    app.get("/api", async(req,resp)=>{
+        const collection = db.collection("employee")
+        const result = await collection.find().toArray();
+        resp.send(result);
+    })
+    app.get("/ui",async(req,resp)=>{
+        const collection = db.collection("employee")
+        const result = await collection.find().toArray();
+        resp.render("myDataBase",{result})
+    })
 })
 
 app.listen(PORT);
-console.log(`listening at ${PORT}`);
+console.log(`running at ${PORT}`)
