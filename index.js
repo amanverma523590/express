@@ -1,5 +1,5 @@
 import express from "express";
-import { MongoClient } from "mongodb";
+import { MongoClient, ObjectId } from "mongodb";
 
 const url = "mongodb://localhost:27017";
 const dbName = "myDataBase";
@@ -43,6 +43,22 @@ client.connect().then((connection) => {
     const collection = db.collection("employee");
     const result = await collection.insertOne(req.body)
     resp.send({"message":result})
+  })
+  app.delete("/delete/:id",async(req,resp)=>{
+    console.log(req.params.id)
+    const collection = db.collection("employee");
+    const result = await collection.deleteOne({_id: new ObjectId(req.params.id)});
+    if(result){
+      resp.send({
+        message : "Data Deleted .....",
+        success : true
+      })
+    }else{
+      resp.send({
+        message : "Data Not Deleted.....",
+        success : false
+      })
+    }
   })
 
 
